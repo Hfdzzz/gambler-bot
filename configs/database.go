@@ -136,3 +136,50 @@ func UpdateUserDataLose(username string, money int){
 
 	log.Println("Succes update data for user: : ", username)
 }
+
+func GetAllUsers(s *discordgo.Session, m *discordgo.MessageCreate){
+	collection := GetCollection("user")
+
+	cursor, err := collection.Find(context.TODO(), bson.M{})
+	if err != nil {
+		log.Fatal("Gagal mengambil data pengguna: ", err)
+		return
+	}
+	defer cursor.Close(context.TODO())
+
+	var users []entity.User
+	err = cursor.All(context.TODO(), &users)
+	if err != nil {
+		log.Fatal("Gagal decode data pengguna: ", err)
+		return
+	}
+
+	if len(users) == 0 {
+		s.ChannelMessageSend(m.ChannelID, "Leaderboard kosong, ayo mulai bermain! 🎮")
+		return
+	}
+
+	embed := &discordgo.MessageEmbed{
+		Title:       "🏆 Leaderboard - User Balance",
+		Description: "Daftar pengguna dan jumlah uang:",
+		Color:       0xFFD700, // Warna emas
+		Fields:      []*discordgo.MessageEmbedField{},
+		Footer: &discordgo.MessageEmbedFooter{
+			Text: "Main terus biar jadi nomor 1! 🚀",
+		},
+	}
+	
+	for i, user := range users {
+		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
+			Name:   fmt.Sprintf("%d. 👤 %-3s %-15d", i+1, user.Username, user.Money),
+			
+			Inline: false, // Inline false biar satu baris penuh
+		})
+	}
+	
+	
+	
+	// Kirim embed ke Discord
+	s.ChannelMessageSendEmbed(m.ChannelID, embed)
+	
+}

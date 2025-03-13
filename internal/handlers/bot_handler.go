@@ -17,8 +17,8 @@ func Bot_Handler(s *discordgo.Session, m *discordgo.MessageCreate){
 		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("HI %s!", m.Author.Username))
 	}
 
-	if m.Content == "leaderboard" {
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprint("Sedang dalam pengerjaan"))
+	if m.Content == "ld" {
+		configs.GetAllUsers(s,m)
 	}
 
 	if m.Content == "bj" {

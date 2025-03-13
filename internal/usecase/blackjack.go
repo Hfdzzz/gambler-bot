@@ -178,8 +178,30 @@ func StayCard(s *discordgo.Session, m *discordgo.MessageCreate){
 
 	session.valueBot += rand.Intn(11)+1
 
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Kartu %s: %d", m.Author.Username, session.valueUser))
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Kartu Host: %d",session.valueBot))
+	embed := &discordgo.MessageEmbed{
+		Title:       "🃏 Blackjack - Update Kartu",
+		Description: fmt.Sprintf("**%s menarik kartu baru!**", m.Author.Username),
+		Color:       0x00ff00, // Warna hijau
+	
+		Fields: []*discordgo.MessageEmbedField{
+			{
+				Name:   fmt.Sprintf("🧍 Pemain: %s", m.Author.Username),
+				Value:  fmt.Sprintf("Kartu Baru: %d\n**Total Poin:** %d", rand.Intn(11)+1, session.valueUser),
+				Inline: true,
+			},
+			{
+				Name:   "🤖 Bot (Host)",
+				Value:  fmt.Sprintf("Kartu Baru: %d\n**Total Poin:** %d", rand.Intn(11)+1, session.valueBot),
+				Inline: true,
+			},
+		},
+	
+		Footer: &discordgo.MessageEmbedFooter{
+			Text: "Ketik 'hit' untuk ambil kartu lagi, atau 'stand' untuk berhenti.",
+		},
+	}
+	
+	s.ChannelMessageSendEmbed(m.ChannelID, embed)
 
 
 	if session.valueBot == 21 && session.valueUser == 21 {
