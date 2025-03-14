@@ -14,11 +14,15 @@ func Bot_Handler(s *discordgo.Session, m *discordgo.MessageCreate){
 	}
 
 	if m.Content == "hi" {
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("HI %s!", m.Author.Username))
+		s.ChannelMessageSendReply(m.ChannelID, fmt.Sprintf("HI %s!", m.Author.Username), &discordgo.MessageReference{
+			MessageID: m.ID,
+			ChannelID: m.ChannelID,
+			GuildID: m.GuildID,
+		})
 	}
 
 	if m.Content == "ld" {
-		configs.GetAllUsers(s,m)
+		usecase.Leaderboard(s,m)
 	}
 
 	if m.Content == "bj" {

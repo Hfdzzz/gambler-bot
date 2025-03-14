@@ -176,10 +176,13 @@ func GetAllUsers(s *discordgo.Session, m *discordgo.MessageCreate){
 			Inline: false, // Inline false biar satu baris penuh
 		})
 	}
-	
-	
-	
+
+	msgRef := &discordgo.MessageReference{
+		MessageID: m.ID,
+		ChannelID: m.ChannelID,
+		GuildID:   m.GuildID,
+	}
 	// Kirim embed ke Discord
-	s.ChannelMessageSendEmbed(m.ChannelID, embed)
+	s.ChannelMessageSendEmbedReply(m.ChannelID, embed, msgRef)
 	
 }
